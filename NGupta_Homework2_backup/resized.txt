@@ -1,5 +1,0 @@
-curveVertex(0.4967 * width\, 0.4262 * height);
-curveVertex(0.9933 * width\, 0.435 * height);
-curveVertex(0.9933 * width\, 0.9862 * height);
-curveVertex(0.0117 * width\, 0.9888 * height);
-curveVertex(0.0017 * width\, 0.45 * height);

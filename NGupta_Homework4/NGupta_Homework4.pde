@@ -6,6 +6,10 @@
 //     Press 'r' to reset to original state
 //     Press 'f' to flip colors (red becomed violet, orange becomes indigo, etc). Note this is only for new particles getting ejected. Particles already in the air dont change color.
 
+// NOTES:
+//   Particles are affected by gravity
+//   Particles have different ages (some last for longer than others) 
+
 PImage img01;
 float w;
 float h;

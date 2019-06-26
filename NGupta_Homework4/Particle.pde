@@ -126,13 +126,13 @@ void setupColors(){
   
 }
 
-void updateAgeOfPortrait(){ portraitAge += 1; }
-
-void resetAgeOfPortrait(){ portraitAge = 0; }
-
 void resetParticleAge(){
   for (int i = 0; i < particleCount; i++){
     maxAge[i] = random(0,200);
     currentAge[i] = 0;
   }   
 }
+
+void updateAgeOfPortrait(){ portraitAge += 1; }
+
+void resetAgeOfPortrait(){ portraitAge = 0; }

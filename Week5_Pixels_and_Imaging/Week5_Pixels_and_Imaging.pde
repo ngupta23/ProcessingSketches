@@ -19,8 +19,8 @@ void setup(){
    float r = red(pixels[i]); // extracts the red compnent of the pixes;
    float g = green(pixels[i]); 
    float b = blue(pixels[i]); 
-   float a = alpha(pixels[i]);
-   println(a);
+   //float a = alpha(pixels[i]);
+   //println(a);
    pixels[i] = color(r*=0.5,g,b); // 50% red of original picture
  }
  updatePixels();
