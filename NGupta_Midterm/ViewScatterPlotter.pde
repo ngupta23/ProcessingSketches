@@ -1,7 +1,10 @@
-class ScatterPlotter{
+class ViewScatterPlotter extends PApplet{
   /* ********* 
   ** Fields **
   ************ */
+  
+  private static final int VIEW_WIDTH = 800;
+  private static final int VIEW_HEIGHT = 800;
   
   // Data to be ploted
   private String[] tickers = {"VOO","VEU","BND","VNQ"}; // default values
@@ -20,33 +23,97 @@ class ScatterPlotter{
   private int ageOfAnimation;
   private int alpha;
   
+  private Controller controller;
+  
   /* ***************
   ** Constructors **
   ****************** */
   
-  ScatterPlotter(){
-    // tickers is already defined by default
+  ViewScatterPlotter(){
+    println("Default Constructor should not be used. This is meant to pass at least the controller object");  
+  }
+  
+  ViewScatterPlotter(Controller _control)
+  {
+    controller = _control;
     this.numPointMA = 20;
     setSomeFields();
   }
   
-  ScatterPlotter(String[] tickers){
-    this.tickers = tickers;
-    this.numPointMA = 20;
-    setSomeFields();
-  }
-  
-  ScatterPlotter(String[] tickers, int numPointMA){
-    this.tickers = tickers;
+  ViewScatterPlotter(Controller _control, int numPointMA)
+  {
+    controller = _control;
     this.numPointMA = numPointMA;
     setSomeFields();
   }
+
+  /* *************************************
+  ** Settings, Setup and Draw Functions **
+  **************************************** */
   
-  /* ********** 
-  ** Methods **
-  ************* */
+  public void settings(){
+    this.size(VIEW_WIDTH, VIEW_HEIGHT);
+    
+  }
+  
+  void setup() {
+    //println("Inside setup in ViewScatterPlotter");
+    //println(tickers.length);
+    
+    f = createFont("Arial",16,true); 
+    
+    
+}
+  
+  public void draw(){
+    //println("Inside draw in ViewScatterPlotter");
+    //drawAnimation();
+    
+    if (ageOfAnimation % (refreshFreq*60) == 0){
+    //if(controller.getIsJustUpdated()){
+      // Step 1: Background and Grid
+      drawBackground();
+      drawGrid();
+      
+      // Step 3: Animation
+      drawAnimatedScatterplot();
+      setTicketText();
+      
+      //println ("*************** Inside Scatter Plot Draw >> Age of Animation : " + ageOfAnimation);
+    }
+    
+    //println("Inside Scatter Plot Draw " + controller.getIsJustUpdated());
+    ageOfAnimation++;    
+
+  }
+  
+  
+  /* ***************** 
+  ** Public Methods **
+  ******************** */
+  
+  void updateViewValues(float[] currentPricePercentChangeAll , float[] movingAverageAll){
+    if (glDebug >= 3){
+      println("View Scatter Plotter >> Draw Animation >> " + refreshFreq);
+    } 
+    
+    int numStocks = currentPricePercentChangeAll.length;
+      
+    // Step 2: Stock Price Related
+    for (int i=0; i<numStocks; i++){
+      mappedChange[i] = map(currentPricePercentChangeAll[i],-5,5,-width/(2*(numStocks)),width/(2*(numStocks)));
+      mappedMovingAverage[i] = map(movingAverageAll[i],-5,5,-width/(2*(numStocks)),width/(2*(numStocks)));
+    }
+    currentIndex ++;
+
+  }
+  
+  /* ****************** 
+  ** Private Methods **
+  ********************* */
   
   private void setSomeFields(){
+    //print ("ViewScatterPlotter >> Set Some Fields");
     this.refreshFreq = 1;
     this.numStocks = this.tickers.length;
     this.mappedChange = new float[numStocks];
@@ -62,31 +129,6 @@ class ScatterPlotter{
       stocks[i] = new Stock(tickers[i]);  
     }  
   }
-  
-  void drawAnimation(){
-    if (ageOfAnimation % (refreshFreq*60) == 0){
-      // Step 1: Background and Grid
-      drawBackground();
-      drawGrid();    
-      
-      // Step 2: Stock Price Related
-      for (int i=0; i<numStocks; i++){
-        float percentChange = stocks[i].getCurrentPricePercentChange();
-        mappedChange[i] = map(percentChange,-5,5,-width/(2*(numStocks)),width/(2*(numStocks)));
-               
-        float movingAverage = stocks[i].getMovingAverage();
-        mappedMovingAverage[i] = map(movingAverage,-5,5,-width/(2*(numStocks)),width/(2*(numStocks)));
-      }
-      currentIndex ++;
-      
-      // Step 3: Animation
-      drawAnimatedScatterplot();
-      setTicketText();
-    }
-  
-    ageOfAnimation++;  
-  }
-  
   
   private void drawBackground(){
     for (int i=0; i<numStocks; i++){

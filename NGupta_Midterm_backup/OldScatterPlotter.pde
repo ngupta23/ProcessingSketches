@@ -1,4 +1,4 @@
-class ScatterPlotter{
+class OldScatterPlotter{
   /* ********* 
   ** Fields **
   ************ */
@@ -9,7 +9,7 @@ class ScatterPlotter{
   private int numStocks;
   private float[] mappedChange;
   private float[] mappedMovingAverage;
-  private Stock[] stocks;
+  private OldStock[] stocks;
   
   // For Plotting
   private PVector scatter[][];
@@ -20,27 +20,35 @@ class ScatterPlotter{
   private int ageOfAnimation;
   private int alpha;
   
+  private Controller controller;
+  
   /* ***************
   ** Constructors **
   ****************** */
   
-  ScatterPlotter(){
+  OldScatterPlotter(){
     // tickers is already defined by default
     this.numPointMA = 20;
     setSomeFields();
   }
   
-  ScatterPlotter(String[] tickers){
+  OldScatterPlotter(String[] tickers){
     this.tickers = tickers;
     this.numPointMA = 20;
     setSomeFields();
   }
   
-  ScatterPlotter(String[] tickers, int numPointMA){
+  OldScatterPlotter(String[] tickers, int numPointMA){
     this.tickers = tickers;
     this.numPointMA = numPointMA;
     setSomeFields();
   }
+  
+  OldScatterPlotter(Controller _control)
+  {
+    controller = _control;
+  }
+  
   
   /* ********** 
   ** Methods **
@@ -57,9 +65,9 @@ class ScatterPlotter{
     this.alpha = 25;
     
     // define the stock objects
-    this.stocks = new Stock[numStocks];
+    this.stocks = new OldStock[numStocks];
     for (int i=0; i<numStocks; i++){
-      stocks[i] = new Stock(tickers[i]);  
+      stocks[i] = new OldStock(tickers[i]);  
     }  
   }
   

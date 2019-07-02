@@ -1,7 +1,10 @@
-class ScatterPlotter{
+class ViewScatterPlotter extends PApplet{
   /* ********* 
   ** Fields **
   ************ */
+  
+  private static final int VIEW_WIDTH = 800;
+  private static final int VIEW_HEIGHT = 800;
   
   // Data to be ploted
   private String[] tickers = {"VOO","VEU","BND","VNQ"}; // default values
@@ -20,33 +23,76 @@ class ScatterPlotter{
   private int ageOfAnimation;
   private int alpha;
   
+  private Controller controller;
+  
+  OldScatterPlotter scatterPlotter;
+  
   /* ***************
   ** Constructors **
   ****************** */
   
-  ScatterPlotter(){
+  /*
+  ViewScatterPlotter(){
     // tickers is already defined by default
     this.numPointMA = 20;
     setSomeFields();
   }
   
-  ScatterPlotter(String[] tickers){
+  ViewScatterPlotter(String[] tickers){
     this.tickers = tickers;
     this.numPointMA = 20;
     setSomeFields();
   }
   
-  ScatterPlotter(String[] tickers, int numPointMA){
+  ViewScatterPlotter(String[] tickers, int numPointMA){
     this.tickers = tickers;
     this.numPointMA = numPointMA;
     setSomeFields();
   }
+  */
+  
+  ViewScatterPlotter(){
+    println("Default Constructor should not be used. This is meant to pass at least the controller object");  
+  }
+  
+  ViewScatterPlotter(Controller _control)
+  {
+    controller = _control;
+    this.numPointMA = 20;
+    setSomeFields();
+  }
+  
+  public void settings(){
+    this.size(VIEW_WIDTH, VIEW_HEIGHT);
+    
+  }
+  
+  void setup() {
+    //println("Inside setup in ViewScatterPlotter");
+    //println(tickers.length);
+    
+    /*  Eventually the Scatter Plotter should be moved so that it is inerfaced with the Controller not the mainView */
+    f = createFont("Arial",16,true); 
+    //scatterPlotter = new  OldScatterPlotter(tickers); // new has to be mentioned here (not outside), otherwise JSONObject does not get loaded and gives an error
+    
+    
+}
+  
+  public void draw(){
+    //scatterPlotter.drawAnimation();  // This will doaw on the main Sketch Window (overlapping with the original one
+    //println("Inside draw in ViewScatterPlotter");
+    
+    drawAnimation();
+    
+  }
+  
   
   /* ********** 
   ** Methods **
   ************* */
   
   private void setSomeFields(){
+    //print ("ViewScatterPlotter >> Set Some Fields");
     this.refreshFreq = 1;
     this.numStocks = this.tickers.length;
     this.mappedChange = new float[numStocks];
@@ -64,6 +110,11 @@ class ScatterPlotter{
   }
   
   void drawAnimation(){
+    
+    if (glDebug >= 3){
+      println("View Scatter Plotter >> Draw Animation >> " + refreshFreq);
+    } 
+    
     if (ageOfAnimation % (refreshFreq*60) == 0){
       // Step 1: Background and Grid
       drawBackground();

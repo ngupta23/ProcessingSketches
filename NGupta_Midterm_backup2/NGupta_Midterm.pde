@@ -26,6 +26,23 @@ NOTES:
 
 */
 
+
+/* 
+
+To Fix 
+(1) Moving Average is starting before 20 points
+(2) Code not working for more than 4 stocks 
+
+
+*/
+
+// for debugging program number indicates different levels of verbosity (this is an alternate to using the debug utility which is slower to use)
+// 0 = no debug statements
+// 1 = basic debug statements (no prints in draw functions)
+// 2 = detailed debug statements (may include print statements in draw functions)
+// 3 = detailed debug statements (may include print statements in draw functions) - must be careful to use this (useful only when programmed is killed immediately to check the print console)
+int glDebug = 1; 
+
 // User Inputs
 int canvasSize = 1000;
 String[] tickers = {"VOO","VEU","BND","VNQ"};
@@ -33,19 +50,37 @@ String[] tickers = {"VOO","VEU","BND","VNQ"};
 //String[] tickers = {"VOO","IVOO","VIOO","VEU","BND","VNQ"}; // check autoResizing 2
 //String[] tickers = {"VOO","IVOO","VIOO","VEU","VWO","BND","VNQ"}; // check autoResizing 3
 
+int numPointMA = 20;
+int refreshFreq = 1; // in seconds
 
-// For Plotting
-//ScatterPlotter scatterPlotter = new ScatterPlotter(); // Does not work if new is defined here (comment out to make it work)
-ScatterPlotter scatterPlotter; // Works (must define new inside setup as shown below) (uncomment to make it work)
+
+int ageOfAnimation = 0;
 
 // For text
 PFont f;
     
+Controller control;
+
 void settings(){ size(canvasSize, canvasSize); }
 
 void setup() {
-  f = createFont("Arial",16,true); 
-  scatterPlotter = new  ScatterPlotter(tickers); // new has to be mentioned here (not outside), otherwise JSONObject does not get loaded and gives an error
+  surface.setTitle("Filters"); // Main View is the filters for the Stocks
+  control = new Controller(this, tickers, numPointMA);
+  
 }
 
-void draw(){ scatterPlotter.drawAnimation(); }  //<>//
+void draw(){  //<>//
+  
+  if (ageOfAnimation % (refreshFreq*60) == 0){
+    control.updateLatestPriceAll();        
+  }
+    
+  if (glDebug >= 2){
+    control.modelStocks.printPriceHistories();
+  }
+  
+  control.updateScatterViewValues();
+  control.updateTimeSeriesViewValues();
+  
+  ageOfAnimation++;
+} 

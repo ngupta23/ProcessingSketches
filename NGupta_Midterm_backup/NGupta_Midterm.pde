@@ -26,6 +26,14 @@ NOTES:
 
 */
 
+
+// for debugging program number indicates different levels of verbosity (this is an alternate to using the debug utility which is slower to use)
+// 0 = no debug statements
+// 1 = basic debug statements (no prints in draw functions)
+// 2 = detailed debug statements (may include print statements in draw functions)
+// 3 = detailed debug statements (may include print statements in draw functions) - must be careful to use this (useful only when programmed is killed immediately to check the print console)
+int glDebug = 1; 
+
 // User Inputs
 int canvasSize = 1000;
 String[] tickers = {"VOO","VEU","BND","VNQ"};
@@ -36,16 +44,26 @@ String[] tickers = {"VOO","VEU","BND","VNQ"};
 
 // For Plotting
 //ScatterPlotter scatterPlotter = new ScatterPlotter(); // Does not work if new is defined here (comment out to make it work)
-ScatterPlotter scatterPlotter; // Works (must define new inside setup as shown below) (uncomment to make it work)
+OldScatterPlotter scatterPlotter; // Works (must define new inside setup as shown below) (uncomment to make it work)
 
 // For text
 PFont f;
     
+Controller control;
+
 void settings(){ size(canvasSize, canvasSize); }
 
 void setup() {
-  f = createFont("Arial",16,true); 
-  scatterPlotter = new  ScatterPlotter(tickers); // new has to be mentioned here (not outside), otherwise JSONObject does not get loaded and gives an error
+  surface.setTitle("Filters"); // Main View is the filters for the Stocks
+  control = new Controller(this, tickers);
+  
+  /*  Eventually the Scatter Plotter should be moved so that it is inerfaced with the Controller not the mainView */
+  //f = createFont("Arial",16,true); 
+  //scatterPlotter = new  OldScatterPlotter(tickers); // new has to be mentioned here (not outside), otherwise JSONObject does not get loaded and gives an error
 }
 
-void draw(){ scatterPlotter.drawAnimation(); }  //<>//
+void draw(){  //<>//
+  //scatterPlotter.drawAnimation(); 
+  control.updateLatestPriceAll(); 
+  control.modelStocks.printPriceHistories();
+} 
