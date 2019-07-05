@@ -24,8 +24,6 @@ class ViewScatterPlotter extends PApplet{
   
   private Controller controller;
   
-  boolean[] selectedTickers;
-  
   // For text
   private PFont f;
   
@@ -41,10 +39,18 @@ class ViewScatterPlotter extends PApplet{
   {
     controller = _control;
     this.tickers = controller.getTickers();
-    this.numPointMA = controller.getNumPointMA();
+    this.numPointMA = 20;
     setSomeFields();
   }
   
+  ViewScatterPlotter(Controller _control, int numPointMA)
+  {
+    controller = _control;
+    this.tickers = controller.getTickers();
+    this.numPointMA = numPointMA;
+    setSomeFields();
+  }
+
   /* *************************************
   ** Settings, Setup and Draw Functions **
   **************************************** */
@@ -55,22 +61,36 @@ class ViewScatterPlotter extends PApplet{
   }
   
   void setup() {
-    f = createFont("Arial",16,true);
-    surface.setTitle("Animated Scatter Plot");
+    //println("Inside setup in ViewScatterPlotter");
+    //println(tickers.length);
+    
+    f = createFont("Arial",16,true); 
+    
+    
   }
   
   public void draw(){
+    //println("Inside draw in ViewScatterPlotter");
+    //drawAnimation();
+    
     if (ageOfAnimation % (refreshFreq*60) == 0){
+      //println("Inside View Scatter Plotter >> draw >> ageOfAnimation: " + ageOfAnimation);
+    //if(controller.getIsJustUpdated()){
       // Step 1: Background and Grid
       drawBackground();
       drawGrid();
       
-      // Step 2: Animation
+      // Step 3: Animation
       drawAnimatedScatterplot();
       setTicketText();
+      
+      //println ("*************** Inside Scatter Plot Draw >> Age of Animation : " + ageOfAnimation);
     }
     
+    //println("Inside Scatter Plot Draw " + controller.getIsJustUpdated());
     ageOfAnimation++; 
+    
+    //println("Scatter draw " + millis());
   }
   
   
@@ -78,15 +98,19 @@ class ViewScatterPlotter extends PApplet{
   ** Public Methods **
   ******************** */
   
-  void updateViewValues(boolean[] selectedTickers, float[] currentPricePercentChangeAll , float[] movingAverageAll){
+  void updateViewValues(float[] currentPricePercentChangeAll , float[] movingAverageAll){
+    if (glDebug >= 3){
+      println("View Scatter Plotter >> Draw Animation >> " + refreshFreq);
+    } 
     
-    this.selectedTickers = selectedTickers;
-    
+    /* Need to comment out */
+    int numStocks = currentPricePercentChangeAll.length;
+      
+    // Step 2: Stock Price Related
     for (int i=0; i<numStocks; i++){
       mappedChange[i] = map(currentPricePercentChangeAll[i],-5,5,-width/(2*(numStocks)),width/(2*(numStocks)));
       mappedMovingAverage[i] = map(movingAverageAll[i],-5,5,-width/(2*(numStocks)),width/(2*(numStocks)));
     }
-    
     currentIndex ++;
 
   }
@@ -96,6 +120,7 @@ class ViewScatterPlotter extends PApplet{
   ********************* */
   
   private void setSomeFields(){
+    //print ("ViewScatterPlotter >> Set Some Fields");
     this.refreshFreq = 1;
     this.numStocks = this.tickers.length;
     this.mappedChange = new float[numStocks];
@@ -104,13 +129,6 @@ class ViewScatterPlotter extends PApplet{
     this.currentIndex = 0;
     this.ageOfAnimation = 0;
     this.alpha = 25;
-    
-    this.selectedTickers = new boolean[numStocks];
-    
-    // Select all tickers by default
-    for (int i=0; i<numStocks; i++){
-      selectedTickers[i] = true;
-    }   
        
   }
   
@@ -156,13 +174,11 @@ class ViewScatterPlotter extends PApplet{
     // Upper Diagonal (Daily Change)
     for (int i=0; i<numStocks; i++){
       for (int j=0; j<numStocks; j++){
-        if (selectedTickers[i] || selectedTickers[j]){
-          if (i > j){ // upper diagonal
-            scatter[i][j] = new PVector(mappedChange[i],mappedChange[j]);
-            // Note -ve sign below for y since we have to move up for +ve stock change)
-            // x still has +ve sign since we are moving in the right direction (+ve stock changes moves to the right) 
-            ellipse(width/(2*(numStocks))*(2*i+1) + scatter[i][j].x, height/(2*(numStocks))*(2*j+1) - scatter[i][j].y, 48/numStocks, 48/numStocks);
-          }
+        if (i > j){ // upper diagonal
+          scatter[i][j] = new PVector(mappedChange[i],mappedChange[j]);
+          // Note -ve sign below for y since we have to move up for +ve stock change)
+          // x still has +ve sign since we are moving in the right direction (+ve stock changes moves to the right) 
+          ellipse(width/(2*(numStocks))*(2*i+1) + scatter[i][j].x, height/(2*(numStocks))*(2*j+1) - scatter[i][j].y, 48/numStocks, 48/numStocks);
         }
       }
     }
@@ -171,13 +187,11 @@ class ViewScatterPlotter extends PApplet{
     if (currentIndex >= numPointMA){ // only when buffer has filled up (dont plot MA before that)
       for (int i=0; i<numStocks; i++){
         for (int j=0; j<numStocks; j++){
-          if (selectedTickers[i] || selectedTickers[j]){
-            if (i < j){ // lower diagonal
-              scatter[i][j] = new PVector(mappedMovingAverage[i],mappedMovingAverage[j]);
-              // Note -ve sign below for y since we have to move up for +ve stock change)
-              // x still has +ve sign since we are moving in the right direction (+ve stock changes moves to the right) 
-              ellipse(width/(2*(numStocks))*(2*i+1) + scatter[i][j].x, height/(2*(numStocks))*(2*j+1) - scatter[i][j].y, 48/numStocks, 48/numStocks);
-            }
+          if (i < j){ // lower diagonal
+            scatter[i][j] = new PVector(mappedMovingAverage[i],mappedMovingAverage[j]);
+            // Note -ve sign below for y since we have to move up for +ve stock change)
+            // x still has +ve sign since we are moving in the right direction (+ve stock changes moves to the right) 
+            ellipse(width/(2*(numStocks))*(2*i+1) + scatter[i][j].x, height/(2*(numStocks))*(2*j+1) - scatter[i][j].y, 48/numStocks, 48/numStocks);
           }
         }
       }
@@ -187,6 +201,8 @@ class ViewScatterPlotter extends PApplet{
   private void setTicketText(){
     int fontSize;
     
+    fill(255);       
+    
     for (int i=0; i<numStocks; i++){
       for (int j=0; j<numStocks; j++){
         if (i == j){
@@ -194,7 +210,6 @@ class ViewScatterPlotter extends PApplet{
           textFont(f,fontSize);
           
           textAlign(CENTER);
-          fill(colors[i]); 
           text(tickers[i],width/(2*numStocks)*(2*i+1),height/(2*numStocks)*(2*j+1)+fontSize/2.5);
           
           fontSize = 80/numStocks;

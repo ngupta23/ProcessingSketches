@@ -1,13 +1,11 @@
 class ViewStockDetailView extends PApplet{
   
-  private static final int VIEW_WIDTH = 700;
+  private static final int VIEW_WIDTH = 800;
   private static final int VIEW_HEIGHT = 800;
   
   private Controller controller;
   private String[] tickers; 
   private int numStocks;
-  
-  boolean[] selectedTickers;
   
   // Data for plotting
   String[] companyNames;
@@ -48,7 +46,6 @@ class ViewStockDetailView extends PApplet{
   
   void setup() {
      f = createFont("Arial",16,true); 
-     surface.setTitle("Live Stock Data");
   }
   
   public void draw(){
@@ -75,34 +72,31 @@ class ViewStockDetailView extends PApplet{
     text("YTD Change ",width/(numStocks+1),height_multiplier*10.5);
     
     for(int i=0; i<numStocks; i++){ // For all stocks
-      if (selectedTickers[i]){
-        fontSize = 75/numStocks;
-        textFont(f,fontSize);
-        textAlign(LEFT); 
-        fill(colors[i]); 
-        
-        float width_val = width/(2*(numStocks+1))*(2*(i+1)+1);
-        
-        text(this.tickers[i],width_val,height_multiplier*0.5);
-        //text(this.companyNames[i],width_val,height_multiplier*0.5); // Future Enhancement (required wrapping of text)
-        text(this.openPrices[i],width_val,height_multiplier*1.5);
-        text(this.closePrices[i],width_val,height_multiplier*2.5);
-        text(this.highPrices[i],width_val,height_multiplier*3.5);
-        text(this.lowPrices[i],width_val,height_multiplier*4.5);
-        text(this.previousClosePrices[i],width_val,height_multiplier*5.5);
-        text(this.changePrices[i],width_val,height_multiplier*6.5);
-        text(this.changePercentages[i],width_val,height_multiplier*7.5);
-        text(this.week52Highs[i],width_val,height_multiplier*8.5);
-        text(this.week52Lows[i],width_val,height_multiplier*9.5);
-        text(this.ytdChanges[i],width_val,height_multiplier*10.5);
-      }
+      fontSize = 75/numStocks;
+      textFont(f,fontSize);
+      textAlign(LEFT); 
+      fill(colors[i]); 
+      
+      float width_val = width/(2*(numStocks+1))*(2*(i+1)+1);
+      
+      text(this.tickers[i],width_val,height_multiplier*0.5);
+      //text(this.companyNames[i],width_val,height_multiplier*0.5); // Future Enhancement (required wrapping of text)
+      text(this.openPrices[i],width_val,height_multiplier*1.5);
+      text(this.closePrices[i],width_val,height_multiplier*2.5);
+      text(this.highPrices[i],width_val,height_multiplier*3.5);
+      text(this.lowPrices[i],width_val,height_multiplier*4.5);
+      text(this.previousClosePrices[i],width_val,height_multiplier*5.5);
+      text(this.changePrices[i],width_val,height_multiplier*6.5);
+      text(this.changePercentages[i],width_val,height_multiplier*7.5);
+      text(this.week52Highs[i],width_val,height_multiplier*8.5);
+      text(this.week52Lows[i],width_val,height_multiplier*9.5);
+      text(this.ytdChanges[i],width_val,height_multiplier*10.5);
     }
           
     
   }
   
-  void updateViewValues(boolean[] selectedTickers
-                        ,String[] companyNames
+  void updateViewValues(String[] companyNames
                         , float[] openPrices
                         , float[] closePrices
                         , float[] highPrices
@@ -114,7 +108,7 @@ class ViewStockDetailView extends PApplet{
                         , float[] week52Lows
                         , float[] ytdChanges
                         ){
-    this.selectedTickers = selectedTickers;
+
     this.companyNames = companyNames;
     this.openPrices = openPrices;
     this.closePrices = closePrices;
@@ -140,13 +134,10 @@ class ViewStockDetailView extends PApplet{
   
   private void setSomeFields(){
     this.companyNames = new String[numStocks];
-    this.selectedTickers = new boolean[numStocks];
     
     // initialize to empty string to handle null values returned from the web
-    // also select all tickers by default
     for (int i=0; i<numStocks; i++){
-      companyNames[i] = ""; 
-      selectedTickers[i] = true;
+      companyNames[i] = "";    
     }
     
     this.openPrices = new float[numStocks];

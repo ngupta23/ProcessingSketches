@@ -116,6 +116,9 @@ class Stock{
     stockData = loadJSONObject(url);
     startingPrice = stockData.getFloat("latestPrice");
     
+    //println("Inside Stock class >> loadAllData: ");
+    //print(stockData.getString("companyName",getCompanyName()));
+    
     // Default Value (in case value is not returned by JSON Object) is what is stored already (previously)
     setCompanyName(stockData.getString("companyName",getCompanyName()));
     setOpenPrice(stockData.getFloat("open",getOpenPrice()));
@@ -189,7 +192,7 @@ class Stock{
     if (glDebug >= 2){
       println("Inside Stock Class updatePriceHistory function >> " + ticker + " >> Latest Price: " + latestPrice);
     }
-    
+    // TODO: Add code to update history
     // Shift all left by one
     for (int i = 0; i < numPointMA - 1 ; i++){
       priceHistory[i] = priceHistory[i+1];

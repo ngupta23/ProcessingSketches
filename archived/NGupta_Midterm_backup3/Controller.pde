@@ -56,27 +56,27 @@ class Controller{
   public void updateLatestPriceAll(){
     // Gets the latest stock price for all stocks and updates price history
     modelStocks.updateLatestPriceAll();    
+    
   }
   
   public void updateAllData(){
-    // Gets the latest stock data for all stocks and updates price history
+    // Gets the latest stock price for all stocks and updates price history
     modelStocks.updateAllData();    
+    
   }
   
-  public void updateScatterViewValues(boolean[] selectedTickers){
-    /* Updates the view with the latest data for all stocks */
-    vwScatterPlotter.updateViewValues(selectedTickers, modelStocks.getCurrentPricePercentChangeAll(), modelStocks.getMovingAverageAll());
+  public void updateScatterViewValues(){
+    vwScatterPlotter.updateViewValues(modelStocks.getCurrentPricePercentChangeAll(), modelStocks.getMovingAverageAll());  
   }  
     
-  public void updateTimeSeriesViewValues(boolean[] selectedTickers){
+  public void updateTimeSeriesViewValues(){
     /* Updates the view with the latest data for all stocks */
-    vwTimeSeries.updateViewValues(selectedTickers, modelStocks.getPriceHistories());    
+    vwTimeSeries.updateViewValues(modelStocks.getPriceHistories());    
   }
   
-  public void updateStockDetailViewValues(boolean[] selectedTickers){
+  public void updateStockDetailViewValues(){
     /* Updates the view with the latest data for all stocks */
-    vwStockDetails.updateViewValues(selectedTickers
-                                    ,modelStocks.getCompanyNames()
+    vwStockDetails.updateViewValues(modelStocks.getCompanyNames()
                                     ,modelStocks.getOpenPrices()
                                     ,modelStocks.getClosePrices()
                                     ,modelStocks.getHighPrices()
@@ -95,13 +95,13 @@ class Controller{
   ********************* */
   
   private void drawViews(){
-    vwScatterPlotter = new ViewScatterPlotter(this);
+    vwScatterPlotter = new ViewScatterPlotter(this, this.getNumPointMA());  
     vwTimeSeries = new ViewTimeSeries(this);
     vwStockDetails = new ViewStockDetailView(this);
     
     PApplet.runSketch(new String[]{ "--display=2", "--location=0,0", "Animated Scatter Plot"}, vwScatterPlotter);
-    PApplet.runSketch(new String[]{ "--display=2", "--location=810,0", "Time Series Data"}, vwTimeSeries);
-    PApplet.runSketch(new String[]{ "--display=2", "--location=1220,0", "Stock Data"}, vwStockDetails);
+    PApplet.runSketch(new String[]{ "--display=2", "--location=200,200", "Time Series Data"}, vwTimeSeries);
+    PApplet.runSketch(new String[]{ "--display=2", "--location=400,400", "Stock Data"}, vwStockDetails);
   }
   
   /* ****************
