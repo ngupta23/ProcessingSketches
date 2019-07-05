@@ -52,8 +52,6 @@ class ViewTimeSeries extends PApplet{
   public void draw(){
     
     if (ageOfAnimation % (refreshFreq*60) == 0){
-    //if(controller.getIsJustUpdated()){
-      
       // Step 1: Background and Grid
       drawBackground();
       drawGrid();
@@ -170,7 +168,6 @@ class ViewTimeSeries extends PApplet{
   private float mapValuesToYAxis(float price){
     float mappedVal = map(price,0,500,0,height*0.9);
     return(mappedVal);
-    
   }
   
   private void drawBackground(){

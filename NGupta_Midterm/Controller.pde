@@ -3,9 +3,9 @@ class Controller{
   private PApplet mainView;
   private ViewScatterPlotter vwScatterPlotter;
   private ViewTimeSeries vwTimeSeries;
-  private ViewStockDetailView vwStockDetails;
+  //private ViewStockDetailView vwStockDetails;
+  private ViewStockCompare vwStockCompare;
   
-  Boolean isJustUpdated;
   
   /* ***************
   ** Constructors **
@@ -15,7 +15,6 @@ class Controller{
   {
     mainView = _mainView;
     modelStocks = new ModelStocks(this);
-    isJustUpdated = false;
        
     drawViews();
     printDiagnostics();
@@ -25,7 +24,6 @@ class Controller{
   {
     mainView = _mainView;
     modelStocks = new ModelStocks(this, _tickers);
-    isJustUpdated = false;
         
     drawViews();
     printDiagnostics();
@@ -35,7 +33,6 @@ class Controller{
   {
     mainView = _mainView;
     modelStocks = new ModelStocks(this, _tickers, numPointMA);
-    isJustUpdated = false;
             
     drawViews();
     printDiagnostics();
@@ -46,8 +43,7 @@ class Controller{
   ************************* */
   String[] getTickers(){ return(modelStocks.getTickers()); }
   int getNumPointMA(){ return(modelStocks.getNumPointMA()); }
-  Boolean getIsJustUpdated() { return(isJustUpdated); }
-  void setIsJustUpdated(Boolean value){ isJustUpdated = value; }
+ 
     
   /* *****************
   ** Public Methods **
@@ -73,9 +69,27 @@ class Controller{
     vwTimeSeries.updateViewValues(selectedTickers, modelStocks.getPriceHistories());    
   }
   
+  /*
   public void updateStockDetailViewValues(boolean[] selectedTickers){
-    /* Updates the view with the latest data for all stocks */
     vwStockDetails.updateViewValues(selectedTickers
+                                    ,modelStocks.getCompanyNames()
+                                    ,modelStocks.getOpenPrices()
+                                    ,modelStocks.getClosePrices()
+                                    ,modelStocks.getHighPrices()
+                                    ,modelStocks.getLowPrices()
+                                    ,modelStocks.getPreviousClosePrices()
+                                    ,modelStocks.getChangePrices()
+                                    ,modelStocks.getChangePercentages()
+                                    ,modelStocks.getWeek52Highs()
+                                    ,modelStocks.getWeek52Lows()
+                                    ,modelStocks.getYtdChanges()
+                                   );
+  }
+  */
+  
+  public void updateStockCompareViewValues(boolean[] selectedTickers){
+    /* Updates the view with the latest data for all stocks */
+    vwStockCompare.updateViewValues(selectedTickers
                                     ,modelStocks.getCompanyNames()
                                     ,modelStocks.getOpenPrices()
                                     ,modelStocks.getClosePrices()
@@ -97,11 +111,13 @@ class Controller{
   private void drawViews(){
     vwScatterPlotter = new ViewScatterPlotter(this);
     vwTimeSeries = new ViewTimeSeries(this);
-    vwStockDetails = new ViewStockDetailView(this);
+    //vwStockDetails = new ViewStockDetailView(this);
+    vwStockCompare = new ViewStockCompare(this);
     
     PApplet.runSketch(new String[]{ "--display=2", "--location=0,0", "Animated Scatter Plot"}, vwScatterPlotter);
     PApplet.runSketch(new String[]{ "--display=2", "--location=810,0", "Time Series Data"}, vwTimeSeries);
-    PApplet.runSketch(new String[]{ "--display=2", "--location=1220,0", "Stock Data"}, vwStockDetails);
+    //PApplet.runSketch(new String[]{ "--display=2", "--location=0,850", "Stock Data"}, vwStockDetails);
+    PApplet.runSketch(new String[]{ "--display=2", "--location=1220,0", "Stock Comparison"}, vwStockCompare);
   }
   
   /* ****************

@@ -26,9 +26,9 @@ NOTES:
 * Scatterplot automatically resizes based on number of stocks picked by user. However fo best use, it is recommended not to visualize more than 4 or 5 stocks at a time.
 
 Future Enhancements
-(1) Axis Labels for Time Series
-(2) Update View 3 (or add a 4th view) into a visualization instead of text
-(3) For current View 3, add Company information (text) with text wrapping
+* Axis Labels for Time Series
+* Add Company information (text) with text wrapping
+* Fix Bidirectional mapping in View 3 and add reference line
 
 */
 
@@ -43,7 +43,7 @@ private String[] tickers = {"VOO","VEU","BND","VNQ"};
 //private String[] tickers = {"VOO","IVOO","VIOO","VEU","BND","VNQ"}; // check autoResizing 2 
 //private String[] tickers = {"VOO","IVOO","VIOO","VEU","VWO","BND","VNQ"}; // check autoResizing 3
 
-private int numPointMA = 20;
+private int numPointMA = 10;
 private int refreshFreq = 1; // in seconds
 
 
@@ -75,6 +75,9 @@ private Menu menu;
 private Controller control;
 private int ageOfAnimation = 0;
 
+import controlP5.*;
+ControlP5 cp5;
+
 /* *************************************
 ** Settings, Setup and Draw Functions **
 **************************************** */
@@ -85,9 +88,24 @@ void setup() {
   surface.setTitle("Filters"); // Main View is the filters for the Stocks
   surface.setLocation(810, 830);
 
+  /*
+  cp5 = new ControlP5(this);
+  cp5.addButton("test_button1")
+    .setValue(0)
+    .setPosition(300,300)
+    .setSize(50,50);
+    
+  cp5.addButton("test_button2")
+    .setValue(1)
+    .setPosition(400,400)
+    .setSize(50,50);
+  */
+  
   control = new Controller(this, tickers, numPointMA);
   color[] states = {#FF0000, #00FF00, #FFFF00, #0000FF };  //offState (red), onState (green), overState (yellow), pressState (blue)
   menu = new Menu(Layout.TOP, new Dimension(width, height), tickers, states, ButtonType.RECT);
+  
+  
 }
 
 void draw(){  //<>//
@@ -100,11 +118,32 @@ void draw(){  //<>//
     control.updateAllData();
     control.updateScatterViewValues(selectedButtons);
     control.updateTimeSeriesViewValues(selectedButtons);
-    control.updateStockDetailViewValues(selectedButtons);
+    //control.updateStockDetailViewValues(selectedButtons);
+    control.updateStockCompareViewValues(selectedButtons);
   }
        
   ageOfAnimation++;
+  
 } 
+
+/* **************** 
+** Public Fields **
+******************* */
+
+/*
+public void controlEvent(ControlEvent e){
+  println(e.getController().getName());
+  println(e.getController().getValue());
+}
+
+public void test_button1(int theValue) {
+  println("a button event from test_button 1: " + theValue);
+}
+
+public void test_button2(int theValue) {
+  println("a button event from test_button 2: " + theValue);
+}
+*/
 
 /* ****************** 
 ** Private Methods **

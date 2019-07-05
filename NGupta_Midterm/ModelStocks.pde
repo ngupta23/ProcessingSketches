@@ -218,7 +218,7 @@ class ModelStocks{
     // define the stock objects
     this.stocks = new Stock[numStocks];
     for (int i=0; i<numStocks; i++){
-      stocks[i] = new Stock(tickers[i]);  
+      stocks[i] = new Stock(tickers[i], numPointMA);  
     }  
   }
   
