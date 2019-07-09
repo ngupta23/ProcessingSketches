@@ -1,3 +1,5 @@
+/* Not used for Midterm (replaced with ViewStockCompare) */
+
 class ViewStockDetailView extends PApplet{
   
   private static final int VIEW_WIDTH = 700;

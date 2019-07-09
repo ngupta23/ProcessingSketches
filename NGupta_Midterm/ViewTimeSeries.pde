@@ -20,7 +20,11 @@ class ViewTimeSeries extends PApplet{
   
   // For text
   private PFont f;
-   
+  
+  // For translating the grid and plots
+  float translateY = 0.9*height;
+  float translateX = 0.15*width;
+  
   /* ***************
   ** Constructors **
   ****************** */
@@ -42,6 +46,8 @@ class ViewTimeSeries extends PApplet{
   
   public void settings(){
     this.size(VIEW_WIDTH, VIEW_HEIGHT);
+    this.translateY = 0.9*height;
+    this.translateX = 0.15*width;
   }
   
   void setup() {
@@ -55,44 +61,11 @@ class ViewTimeSeries extends PApplet{
       // Step 1: Background and Grid
       drawBackground();
       drawGrid();
-      
       setLabels();
-
       
-      /* Plot all Points - Note index goes up to last point */
-      if (currentIndex >= numPointMA){ // only when buffer has filled up (dont plot before that)
-        for(int i=0; i<priceHistories.length; i++){ // For all stocks 
-          if (selectedTickers[i]){
-            for (int j=0; j< priceHistories[i].length; j++){ // Plot all points in the buffer
-              fill(colors[i]);
-              pushMatrix();
-                translate(0.1* width,0.9*height);
-                ellipse(j*(0.9*width)/priceHistories[i].length,- mapValuesToYAxis(priceHistories[i][j]),7,7);
-              popMatrix();
-            }
-          }
-        }
-        
-        /* Plot Lines connecting points - Note index goes up to last - 1 point since we are connecting between points */
-        for(int i=0; i<priceHistories.length; i++){ 
-          if (selectedTickers[i]){
-            for (int j=0; j< priceHistories[i].length-1; j++){  
-              pushMatrix();
-                translate(0.1* width,0.9*height);
-                stroke(colors[i]);
-                strokeWeight(3);
-                line(j*(0.9*width)/priceHistories[i].length,- mapValuesToYAxis(priceHistories[i][j]),
-                     (j+1)*(0.9*width)/priceHistories[i].length,- mapValuesToYAxis(priceHistories[i][j+1])
-                    );
-                // Reset Stroke 
-                strokeWeight(1);
-                noStroke();
-                
-              popMatrix();
-            }
-          }
-        }
-      }
+      // Step 2: Draw Time Series
+      drawTimeSeries();
+      
     }
     
     ageOfAnimation++;    
@@ -130,6 +103,7 @@ class ViewTimeSeries extends PApplet{
     this.currentIndex = 0;
     this.ageOfAnimation = 0;
     
+       
     this.selectedTickers = new boolean[numStocks];
     
     // Select all tickers by default
@@ -166,7 +140,7 @@ class ViewTimeSeries extends PApplet{
   }
   
   private float mapValuesToYAxis(float price){
-    float mappedVal = map(price,0,500,0,height*0.9);
+    float mappedVal = map(price,0,500,0,translateY);
     return(mappedVal);
   }
   
@@ -179,10 +153,42 @@ class ViewTimeSeries extends PApplet{
     stroke(255);
     strokeWeight(5);
     
+    int fontSize = 80/numStocks;
+    textFont(f,fontSize);
+    fill(255); 
+    
+    // For Grid
+    int yRange = 500;
+    int xRange = numPointMA;
+      
+    float majorYGridInterval = translateY/10; // fixed to 10 major ticks
+    float majorXGridInterval = (width - translateX)/xRange; // based on number of MA points
+       
     pushMatrix();
-      translate(0.1* width,0.9*height);
+      translate(translateX,translateY);
       line(0, 0, width, 0); // X-axis
       line(0, 0, 0, -height); // Y-axis
+      text("Time ",(width-2*translateX)/2, (height-translateY)*3/4);
+      
+      // Major ticks Y-axis
+      for (int i=0; i<10; i++){
+        ellipse(0, -i*majorYGridInterval, 5, 5);
+        textAlign(RIGHT);
+        text(i*yRange/10,-width/20, -i*majorYGridInterval);
+      }
+      
+      // Major ticks X-axis
+      for (int i=0; i<xRange; i++){
+        ellipse(i*majorXGridInterval, 0, 5, 5);
+        textAlign(LEFT);
+        if (i < xRange -1){
+          text((i+1-xRange), (i-0.5)*majorXGridInterval,(height - translateY)*2/5);
+        }
+        else{
+          //last entry
+          text("Now", (i-0.5)*majorXGridInterval,(height - translateY)*2/5);
+        }  
+      }
     popMatrix();
     
     // reset for rest of the program
@@ -190,4 +196,42 @@ class ViewTimeSeries extends PApplet{
     strokeWeight(1);
   }
   
+  private void drawTimeSeries(){
+    /* Plot all Points - Note index goes up to last point */
+    if (currentIndex >= numPointMA){ // only when buffer has filled up (dont plot before that)
+      for(int i=0; i<priceHistories.length; i++){ // For all stocks 
+        if (selectedTickers[i]){
+          for (int j=0; j< priceHistories[i].length; j++){ // Plot all points in the buffer
+            fill(colors[i]);
+            pushMatrix();
+              translate(translateX,translateY);
+              ellipse(j*(width-translateX)/priceHistories[i].length,- mapValuesToYAxis(priceHistories[i][j]),7,7);
+            popMatrix();
+          }
+        }
+      }
+      
+      /* Plot Lines connecting points - Note index goes up to last - 1 point since we are connecting between points */
+      for(int i=0; i<priceHistories.length; i++){ 
+        if (selectedTickers[i]){
+          for (int j=0; j< priceHistories[i].length-1; j++){  
+            pushMatrix();
+              translate(translateX,translateY);
+              stroke(colors[i]);
+              strokeWeight(3);
+              line(j*(width-translateX)/priceHistories[i].length,- mapValuesToYAxis(priceHistories[i][j]),
+                   (j+1)*(width-translateX)/priceHistories[i].length,- mapValuesToYAxis(priceHistories[i][j+1])
+                  );
+              // Reset Stroke 
+              strokeWeight(1);
+              noStroke();
+              
+            popMatrix();
+          }
+        }
+      }
+    }  
+  }
+  
+   
 }

@@ -103,7 +103,7 @@ class ViewScatterPlotter extends PApplet{
     this.scatter = new PVector[numStocks][numStocks];
     this.currentIndex = 0;
     this.ageOfAnimation = 0;
-    this.alpha = 25;
+    this.alpha = 255/numPointMA;
     
     this.selectedTickers = new boolean[numStocks];
     
@@ -121,10 +121,26 @@ class ViewScatterPlotter extends PApplet{
           fill(0); // no transparency here
         }
         else if (i > j){ // upper diagonal
-          fill(255,0,0,alpha);
+          if (!selectedTickers[i] && !selectedTickers[j]){
+            // Both Stocks deselected, clear immediately by removing transparency
+            fill(255,0,0);
+          }
+          else{
+            // If any one selected, then add transparency effect
+            fill(255,0,0,alpha);
+          }
         }
         else if (i < j){ // lower diagonal
-          fill(0,0,255,alpha);
+          if (!selectedTickers[i] && !selectedTickers[j]){
+            // Both Stocks deselected, clear immediately by removing transparency
+            fill(0,0,255);
+          }
+          else{
+            // If any one selected, then add transparency effect
+            fill(0,0,255,alpha);
+          }
+          
+          
         }
         rect(i*width/numStocks,j*height/numStocks, width/numStocks,height/numStocks);
       }
