@@ -43,8 +43,8 @@ Future Enhancements
 ** User Inputs **
 ***************** */
 
-private String[] tickers = {"VOO","VEU","BND","VNQ"};
-//private String[] tickers = {"VOO","IVOO","VEU","BND","VNQ"}; // check autoResizing 1
+//private String[] tickers = {"VOO","VEU","BND","VNQ"};
+private String[] tickers = {"VOO","IVOO","VEU","BND","VNQ"}; // check autoResizing 1
 // Not recommended to view more than 5 stocks at a time due to size constraints and overload of information
 //private String[] tickers = {"VOO","IVOO","VIOO","VEU","BND","VNQ"}; // check autoResizing 2 
 //private String[] tickers = {"VOO","IVOO","VIOO","VEU","VWO","BND","VNQ"}; // check autoResizing 3
